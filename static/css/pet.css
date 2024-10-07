@@ -1,0 +1,115 @@
+.pet-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pet-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
+}
+
+.pet-image:hover {
+    transform: scale(1.1);
+}
+
+.pet-dialogue {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    padding: 10px;
+    max-width: 80%;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.pet-stats {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat i {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.user-input {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.user-input input {
+    width: 70%;
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.user-input button,
+.interaction-buttons button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.user-input button:hover,
+.interaction-buttons button:hover {
+    background-color: #45a049;
+}
+
+.interaction-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Dark theme adjustments */
+body.dark-theme .pet-container {
+    background-color: #2c2c2c;
+    color: #f0f0f5;
+}
+
+body.dark-theme .pet-dialogue {
+    background-color: #333;
+    border-color: #444;
+}
+
+body.dark-theme .user-input input {
+    background-color: #444;
+    color: #f0f0f5;
+    border-color: #555;
+}
+
+body.dark-theme .user-input button,
+body.dark-theme .interaction-buttons button {
+    background-color: #81c784;
+    color: #2c2c2c;
+}
+
+body.dark-theme .user-input button:hover,
+body.dark-theme .interaction-buttons button:hover {
+    background-color: #a5d6a7;
+}

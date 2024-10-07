@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenPulse - Your Mental Health Companion</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">ZenPulse</div>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <button id="theme-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}" class="nav-button">Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="nav-button">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="nav-button">Login</a>
+                <a href="{{ url_for('signup') }}" class="nav-button">Sign Up</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero">
+            <div class="hero-content">
+                <h1>Your Personal Mental Health Companion</h1>
+                <p>Discover peace of mind with ZenPulse's AI-powered support and personalized tools.</p>
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('dashboard') }}" class="cta-button">Go to Dashboard</a>
+                {% else %}
+                    <a href="{{ url_for('signup') }}" class="cta-button">Start Your Journey</a>
+                {% endif %}
+            </div>
+            <div class="hero-image">
+                <img src="{{ url_for('static', filename='images/hero-image.png') }}" alt="ZenPulse App">
+            </div>
+        </section>
+
+        <section id="features">
+            <h2>Discover Our Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>AI Chatbot</h3>
+                        <p>Talk to our virtual psychiatrist for 24/7 emotional support and guidance.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Mood-Boosting Music</h3>
+                        <p>Access personalized playlists to uplift your mood and reduce stress.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Interactive Games</h3>
+                        <p>Engage in fun activities designed to reduce stress and improve cognition.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Virtual Pet Companion</h3>
+                        <p>Care for a virtual pet and experience the joy of companionship.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Self-Care Suggestions</h3>
+                        <p>Receive personalized self-care tips based on your emotional state.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Gratitude Journal</h3>
+                        <p>Cultivate positivity by recording daily moments of gratitude.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works">
+            <h2>How ZenPulse Works</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="step-content">
+                        <h3>Sign Up</h3>
+                        <p>Create your account and set up your profile.</p>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="step-content">
+                        <h3>Track Your Mood</h3>
+                        <p>Log your daily emotions and thoughts.</p>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="step-content">
+                        <h3>Get Personalized Support</h3>
+                        <p>Receive AI-powered guidance and resources.</p>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="step-content">
+                        <h3>Improve Over Time</h3>
+                        <p>Track your progress and celebrate your growth.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mood Tracker Section -->
+        <section id="mood-tracker">
+            <h2>How are you feeling today?</h2>
+            <div class="mood-tracker-container">
+                <div class="mood-slider">
+                    <input type="range" min="1" max="5" value="3" class="slider" id="moodSlider">
+                    <div class="mood-labels">
+                        <span>😢</span>
+                        <span>😐</span>
+                        <span>😊</span>
+                        <span>😄</span>
+                        <span>🥳</span>
+                    </div>
+                </div>
+                <button id="logMood" class="cta-button">Log My Mood</button>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials">
+            <h2>What Our Users Say</h2>
+            <div class="testimonial-container">
+                <div class="testimonial-carousel">
+                    <div class="testimonial">
+                        <div class="testimonial-content">
+                            <p>"ZenPulse has been a game-changer for my mental health. The AI chatbot feels like talking to a real therapist!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="{{ url_for('static', filename='images/user1.jpg') }}" alt="Sarah K." class="testimonial-avatar">
+                            <cite>- Sarah K.</cite>
+                        </div>
+                    </div>
+                    <div class="testimonial">
+                        <p>"I love my virtual pet! It gives me a sense of purpose and always cheers me up when I'm feeling down."</p>
+                        <cite>- Emily T.</cite>
+                    </div>
+                </div>
+                <div class="testimonial-nav">
+                    <button id="prevTestimonial" class="nav-button">&lt;</button>
+                    <button id="nextTestimonial" class="nav-button">&gt;</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <h3 class="faq-question">Is my data secure?</h3>
+                    <div class="faq-answer">
+                        <p>Yes, we use industry-standard encryption to protect your personal information. Your privacy and data security are our top priorities.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <h3 class="faq-question">Can I use ZenPulse for free?</h3>
+                    <div class="faq-answer">
+                        <p>We offer a free trial period, after which you can choose from our affordable subscription plans. This allows you to experience the full benefits of ZenPulse before committing.</p>
+                    </div>
+                </div>
+                <!-- Add more FAQ items as needed -->
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section id="cta">
+            <div class="cta-content">
+                <h2>Ready to Improve Your Mental Well-being?</h2>
+                <p>Join thousands of users who have found peace and support with ZenPulse.</p>
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('dashboard') }}" class="cta-button">Go to Dashboard</a>
+                {% else %}
+                    <a href="{{ url_for('signup') }}" class="cta-button">Sign Up Now</a>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-icons">
+                    <a href="#" class="fab fa-facebook"></a>
+                    <a href="#" class="fab fa-twitter"></a>
+                    <a href="#" class="fab fa-instagram"></a>
+                    <a href="#" class="fab fa-linkedin"></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <form>
+                    <input type="email" placeholder="Enter your email">
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 ZenPulse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const body = document.body;
+
+            // Check for saved theme preference or default to light theme
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            body.classList.add(currentTheme + '-theme');
+
+            themeToggle.addEventListener('click', () => {
+                body.classList.toggle('dark-theme');
+                body.classList.toggle('light-theme');
+                const theme = body.classList.contains('dark-theme') ? 'dark' : 'light';
+                localStorage.setItem('theme', theme);
+            });
+        });
+    </script>
+</body>
+</html>

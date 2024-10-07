@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Game - ZenPulse</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <button class="nav-button menu-button">
+                    <div class="menu-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-button" onclick="window.location.href='{{ url_for('dashboard') }}'"><img src="{{ url_for('static', filename='images/home.png') }}" alt="Home"></button>
+                <button class="nav-button" onclick="window.location.href='{{ url_for('chat') }}'"><img src="{{ url_for('static', filename='images/chatbot.png') }}" alt="AI Chat"></button>
+                <button class="nav-button active"  onclick="window.location.href='{{ url_for('game') }}'"><img src="{{ url_for('static', filename='images/game-pad.png') }}" alt="Game"></button>
+                <button class="nav-button" onclick="window.location.href='{{ url_for('pet') }}'"><img src="{{ url_for('static', filename='images/paw.png') }}" alt="Pet"></button>
+                <button class="nav-button"><img src="{{ url_for('static', filename='images/music-notes.png') }}" alt="music"></button>
+            </nav>
+            <div class="sidebar-bottom">
+                <button class="nav-button logout-button" onclick="window.location.href='{{ url_for('logout') }}'"><img src="{{ url_for('static', filename='images/user-logout.png') }}" alt="Logout"></button>
+            </div>
+        </aside>
+        <main>
+            <header>
+                <div class="header-left">
+                    <div class="logo-container">
+                        <div class="logo">
+                            <img src="{{ url_for('static', filename='images/new-logo.png') }}" alt="Logo">
+                        </div>
+                    </div>
+                    <h1>ZenPulse</h1>
+                </div>
+                <div class="header-icons">
+                    <label class="theme-switch" for="theme-toggle">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider round">
+                            <i class="fas fa-sun"></i>
+                            <i class="fas fa-moon"></i>
+                        </span>
+                    </label>
+                </div>
+                <div class="search-profile">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search...">
+                        <button class="search-button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="profile-container">
+                        <img src="{{ url_for('static', filename='images/profile.png') }}" alt="Profile" class="profile-pic">
+                        <div class="profile-dropdown">
+                            <span class="username">{{ username }}</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="main-content">
+                <section class="game-container">
+                    <h2>Memory Card Game</h2>
+                    <p>Match the pairs of cards to win!</p>
+                    <div class="game-board">
+                        {% for card in cards %}
+                        <div class="card" data-card="{{ card }}">
+                            <div class="card-inner">
+                                <div class="card-front">?</div>
+                                <div class="card-back">{{ card }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button id="reset-game">Reset Game</button>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+</body>
+</html>

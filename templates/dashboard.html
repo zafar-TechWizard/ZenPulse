@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ZenPulse</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <button class="nav-button menu-button">
+                    <div class="menu-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-button active"><img src="{{ url_for('static', filename='images/home.png') }}" alt="Home"></button>
+                <button class="nav-button" onclick="window.location.href='{{ url_for('chat') }}'"><img src="{{ url_for('static', filename='images/chatbot.png') }}" alt="AI Chat"></button>
+                <button class="nav-button"  onclick="window.location.href='{{ url_for('game') }}'"><img src="{{ url_for('static', filename='images/game-pad.png') }}" alt="Game"></button>
+                <button class="nav-button" onclick="window.location.href='{{ url_for('pet') }}'"><img src="{{ url_for('static', filename='images/paw.png') }}" alt="Pet"></button>
+                <button class="nav-button"><img src="{{ url_for('static', filename='images/music-notes.png') }}" alt="music"></button>
+            </nav>
+            <div class="sidebar-bottom">
+                <button class="nav-button logout-button" onclick="window.location.href='{{ url_for('logout') }}'"><img src="{{ url_for('static', filename='images/user-logout.png') }}" alt="Logout"></button>
+            </div>
+        </aside>
+        <main>
+            <header>
+                <div class="header-left">
+                    <div class="logo-container">
+                        <div class="logo">
+                            <img src="{{ url_for('static', filename='images/new-logo.png') }}" alt="Logo">
+                        </div>
+                    </div>
+                    <h1>ZenPulse</h1>
+                </div>
+                <div class="header-icons">
+                    <label class="theme-switch" for="theme-toggle">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider round">
+                            <i class="fas fa-sun"></i>
+                            <i class="fas fa-moon"></i>
+                        </span>
+                    </label>
+                </div>
+                <div class="search-profile">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search...">
+                        <button class="search-button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="profile-container">
+                        <img src="{{ url_for('static', filename='images/profile.png') }}" alt="Profile" class="profile-pic">
+                        <div class="profile-dropdown">
+                            <span class="username">{{ username }}</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="main-content">
+                <section class="greeting">
+                    <div class="greeting-text">
+                        <h2>{{ greeting }}, {{ username }}!</h2>
+                        <p class="quote">{{ quote }}</p>
+                    </div>
+                    <div class="mental-health-stats">
+                        <div class="stat">
+                            <span>Streak</span>
+                            <strong>7 days <span class="arrow">↗</span></strong>
+                        </div>
+                        <div class="stat">
+                            <span>Mood Today</span>
+                            <strong class="mood-indicator">😊 Good</strong>
+                        </div>
+                        <button class="start-activity-btn">Start Activity</button>
+                    </div>
+                </section>
+                <div class="dashboard-grid">
+                    
+                    <section class="ai-insights">
+                        <div class="ai-insights-header">
+                            <h3>Ai Insights</h3>
+                            <button class="refresh-btn" title="Refresh insights">
+                                <i class="fas fa-lightbulb"></i> New Insights
+                            </button>
+                        </div>
+                        <div class="insights-grid" id="ai-insights-grid">
+                            <!-- Insights will be dynamically inserted here -->
+                        </div>
+                    </section>
+                    <section class="chat">
+                        <div class="chat-header">
+                            <h3>Virtual Psychiatrist</h3>
+                            <div class="chat-tabs">
+                                <button class="tab-button active" data-tab="ai-chat">
+                                    <i class="fas fa-robot"></i>
+                                    <span>AI Chat</span>
+                                </button>
+                                <button class="tab-button" data-tab="question">
+                                    <i class="fas fa-question-circle"></i>
+                                    <span>Question</span>
+                                </button>
+                                <button class="tab-button" data-tab="tip">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <span>Tip</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chat-content" id="chat-content">
+                            <div class="tab-content active" id="ai-chat-content">
+                                <div class="message assistant">
+                                    <img src="{{ url_for('static', filename='images/ai-assistant.gif') }}" alt="AI Assistant" class="assistant-pic">
+                                    <div class="message-bubble">
+                                        <p>Hello! I'm your virtual psychiatrist. How can I assist you today?</p>
+                                    </div>
+                                </div>
+                                <div class="chat-input">
+                                    <input type="text" id="user-input" placeholder="Type your message here...">
+                                    <button class="send-button" id="send-message">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="tab-content" id="question-content">
+                                <h4>Thought-Provoking Question</h4>
+                                <p id="daily-question">Loading question...</p>
+                                <textarea id="question-response" placeholder="Write your thoughts here..."></textarea>
+                                <button class="discuss-btn" id="discuss-btn">Discuss with AI</button>
+                            </div>
+                            <div class="tab-content" id="tip-content">
+                                <h4>Daily Mental Health Tip</h4>
+                                <div class="tip-container">
+                                    <img src="{{ url_for('static', filename='images/ai-assistant.gif') }}" alt="AI Assistant" class="assistant-pic">
+                                    <p id="daily-tip">"Take a few deep breaths when you feel stressed. Focusing on your breath can help calm your mind and reduce anxiety."</p>
+                                </div>
+                                <button class="learn-more-btn" onclick="window.location.href='{{ url_for('chat') }}'">Learn More from AI</button>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="mood-tracker">
+                        <h3>How are you feeling today?</h3>
+                        <form id="mood-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <div class="mood-options">
+                                <button type="button" name="mood" value="1" class="mood-button">😢</button>
+                                <button type="button" name="mood" value="2" class="mood-button">😕</button>
+                                <button type="button" name="mood" value="3" class="mood-button">😐</button>
+                                <button type="button" name="mood" value="4" class="mood-button">🙂</button>
+                                <button type="button" name="mood" value="5" class="mood-button">😄</button>
+                            </div>
+                        </form>
+                        <section class="mood-history">
+                            <h3>Your Mood History</h3>
+                            <canvas id="moodChart"></canvas>
+                        </section>
+                    </section>
+                    
+                    <section class="pet-status">
+                        <h3>Your Virtual Pet</h3>
+                        <div class="pet-container">
+                            <img id="pet-avatar" src="{{ url_for('static', filename='images/pet-default.png') }}" alt="Your virtual pet">
+                            <div class="pet-stats">
+                                <div class="pet-stat">
+                                    <span>Happiness</span>
+                                    <div class="progress-bar">
+                                        <div id="pet-happiness-bar" class="progress" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="pet-stat">
+                                    <span>Energy</span>
+                                    <div class="progress-bar">
+                                        <div id="pet-energy-bar" class="progress" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p id="pet-status-message">Your pet is doing great!</p>
+                        <button id="interact-pet-btn" class="cta-button">Interact with Pet</button>
+                    </section>
+                    
+                    <section class="activity">
+                        <div class="activity-header">
+                            <div>
+                                <h3>My Activity</h3>
+                                <p>What's waiting for you today</p>
+                            </div>
+                            <button class="icon-button"><i class="far fa-calendar-alt"></i></button>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-event">
+                                <div class="event-time">09:00 AM</div>
+                                <div class="event-content">
+                                    <strong>Project onboarding</strong>
+                                    <p>Google Meeting</p>
+                                </div>
+                            </div>
+                            <div class="timeline-event">
+                                <div class="event-time">11:30 AM</div>
+                                <div class="event-content">
+                                    <strong>Design research</strong>
+                                    <p>Figma file</p>
+                                </div>
+                            </div>
+                            <div class="timeline-event">
+                                <div class="event-time">02:00 PM</div>
+                                <div class="event-content">
+                                    <strong>Coffee break</strong>
+                                    <p>CoCo Cafe</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
