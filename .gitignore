@@ -1,12 +1,25 @@
 # Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*.so
 .Python
 env/
 venv/
 ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
 
 # Flask
 instance/
@@ -18,10 +31,23 @@ instance/
 
 # Environment variables
 .env
+.env.*
 
 # IDE files
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # Logs
 *.log
@@ -29,4 +55,39 @@ instance/
 # Temporary files
 *.tmp
 *.bak
-*.swp
+
+# Project specific files (adjust paths as needed)
+MAIN_APP/image.png
+MAIN_APP/layout.jpg
+MAIN_APP/reference-1.png
+MAIN_APP/reference.png
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# dotenv
+.env
+
+# virtualenv
+.venv
+venv/
+ENV/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+
+# Pyre type checker
+.pyre/
