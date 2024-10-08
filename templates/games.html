@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memory Game - ZenPulse</title>
+    <title>Games - ZenPulse</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/games.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -67,24 +67,13 @@
                 </div>
             </header>
             <div class="main-content">
-                <section class="game-container">
-                    <h2>Memory Card Game</h2>
-                    <p>Match the pairs of cards to win!</p>
-                    <div class="game-board">
-                        {% for card in cards %}
-                        <div class="card" data-card="{{ card }}">
-                            <div class="card-inner">
-                                <div class="card-front">?</div>
-                                <div class="card-back">{{ card }}</div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <button id="reset-game">Reset Game</button>
-                </section>
+                <div class="under-development">
+                    <h2>Under development...</h2>
+                    <p>Exciting games are coming soon!</p>
+                </div>
             </div>
         </main>
     </div>
-    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/games.js') }}"></script>
 </body>
 </html>

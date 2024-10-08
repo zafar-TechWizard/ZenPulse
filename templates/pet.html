@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pet.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.14/lottie.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
@@ -69,37 +70,57 @@
                 </div>
             </header>
             
-            <div class="content">
+            <div class="content pet-page">
                 <div class="pet-container">
-                    <img src="{{ url_for('static', filename='images/pet.png') }}" alt="AI Virtual Pet" class="pet-image" id="pet-image">
+                    <div class="pet-stats">
+                        <div class="stat" id="happiness-stat">
+                            <i class="fas fa-heart stat-icon"></i>
+                            <span class="stat-label">Happiness</span>
+                            <div class="progress-bar"><div class="progress" style="width: 100%;"></div></div>
+                        </div>
+                        <div class="stat" id="intelligence-stat">
+                            <i class="fas fa-brain stat-icon"></i>
+                            <span class="stat-label">Intelligence</span>
+                            <div class="progress-bar"><div class="progress" style="width: 100%;"></div></div>
+                        </div>
+                        <div class="stat" id="energy-stat">
+                            <i class="fas fa-bolt stat-icon"></i>
+                            <span class="stat-label">Energy</span>
+                            <div class="progress-bar"><div class="progress" style="width: 100%;"></div></div>
+                        </div>
+                    </div>
+                    <div class="pet-scene">
+                        <div id="lottie-container"></div>
+                    </div>
                     <div class="pet-dialogue">
                         <p id="pet-response">Hi there! I'm your AI virtual pet. How can I help you today?</p>
-                    </div>
-                    <div class="pet-stats">
-                        <div class="stat">
-                            <i class="fas fa-heart"></i>
-                            <span id="pet-happiness">100%</span>
-                        </div>
-                        <div class="stat">
-                            <i class="fas fa-brain"></i>
-                            <span id="pet-intelligence">100%</span>
-                        </div>
-                        <div class="stat">
-                            <i class="fas fa-battery-full"></i>
-                            <span id="pet-energy">100%</span>
+                        <div class="typing-indicator" style="display: none;">
+                            <span></span><span></span><span></span>
                         </div>
                     </div>
                 </div>
-                <div class="user-input">
-                    <input type="text" id="user-message" placeholder="Chat with your AI pet...">
-                    <button>Send</button>
-                </div>
-                <div class="interaction-buttons">
-                    <button><i class="fas fa-dumbbell"></i> Train</button>
-                    <button><i class="fas fa-gamepad"></i> Play</button>
-                    <button><i class="fas fa-moon"></i> Sleep</button>
-                    <button><i class="fas fa-smile"></i> Check Mood</button>
-                    <button><i class="fas fa-lightbulb"></i> Suggest Activity</button>
+                <div class="interaction-area">
+                    <div class="combined-chat-input">
+                        <div class="top-row">
+                            <div class="interaction-buttons">
+                                <button class="action-btn" data-action="feed" title="Feed"><i class="fas fa-utensils"></i></button>
+                                <button class="action-btn" data-action="play" title="Play"><i class="fas fa-gamepad"></i></button>
+                                <button class="action-btn" data-action="sleep" title="Sleep"><i class="fas fa-bed"></i></button>
+                                <button class="action-btn" data-action="mood" title="Check Mood"><i class="fas fa-smile"></i></button>
+                                <button class="action-btn" data-action="suggest" title="Get Suggestion"><i class="fas fa-lightbulb"></i></button>
+                            </div>
+                            <div class="auto-suggestions">
+                                <button class="suggestion-btn">How are you?</button>
+                                <button class="suggestion-btn">Let's play!</button>
+                                <button class="suggestion-btn">I'm feeling sad</button>
+                                <button class="suggestion-btn">Tell me a joke</button>
+                            </div>
+                        </div>
+                        <div class="user-input">
+                            <input type="text" id="user-message" placeholder="Chat with your AI pet...">
+                            <button id="send-button"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>

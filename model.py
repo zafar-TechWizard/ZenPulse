@@ -35,7 +35,6 @@ class DailyActivity(db.Model):
     logged_mood = db.Column(db.Boolean, default=False)
     played_with_pet = db.Column(db.Boolean, default=False)
     pet_slept = db.Column(db.Boolean, default=False)
-    completed_challenge = db.Column(db.Boolean, default=False)
     last_pet_interaction = db.Column(db.DateTime, default=None)
     
     __table_args__ = (db.UniqueConstraint('user_id', 'date', name='user_daily_activity'),)
