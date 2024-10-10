@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Games - ZenPulse</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/games.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/music.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -23,9 +23,9 @@
             <nav class="sidebar-nav">
                 <button class="nav-button" onclick="window.location.href='{{ url_for('dashboard') }}'"><img src="{{ url_for('static', filename='images/home.png') }}" alt="Home"></button>
                 <button class="nav-button" onclick="window.location.href='{{ url_for('chat') }}'"><img src="{{ url_for('static', filename='images/chatbot.png') }}" alt="AI Chat"></button>
-                <button class="nav-button active"  onclick="window.location.href='{{ url_for('game') }}'"><img src="{{ url_for('static', filename='images/game-pad.png') }}" alt="Game"></button>
+                <button class="nav-button"  onclick="window.location.href='{{ url_for('game') }}'"><img src="{{ url_for('static', filename='images/game-pad.png') }}" alt="Game"></button>
                 <button class="nav-button" onclick="window.location.href='{{ url_for('pet') }}'"><img src="{{ url_for('static', filename='images/paw.png') }}" alt="Pet"></button>
-                <button class="nav-button" onclick="window.location.href='{{ url_for('music') }}'"><img src="{{ url_for('static', filename='images/music-notes.png') }}" alt="music"></button>
+                <button class="nav-button active" onclick="window.location.href='{{ url_for('music') }}'"><img src="{{ url_for('static', filename='images/music-notes.png') }}" alt="music"></button>
                 <button class="nav-button" onclick="window.location.href='{{ url_for('gratitude_journal') }}'"><img src="{{ url_for('static', filename='images/gratitude.png') }}" alt="Gratitude"></button>
             </nav>
             <div class="sidebar-bottom">
@@ -75,6 +75,6 @@
             </div>
         </main>
     </div>
-    <script src="{{ url_for('static', filename='js/games.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/music.js') }}"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 import json
 import random
 import re
-from flask import Flask, render_template, redirect, url_for, request, flash, jsonify, current_app
+from flask import Flask, abort, render_template, redirect, url_for, request, flash, jsonify, current_app
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import requests
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,11 +11,12 @@ from api import api_key
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email
-from model import db, User, MoodEntry, ChatMessage, DailyActivity, PetConversation
+from model import db, User, MoodEntry, ChatMessage, DailyActivity, PetConversation, GratitudeEntry
 from datetime import datetime, timedelta, date
 from sqlalchemy.exc import SQLAlchemyError
 from nltk.sentiment import SentimentIntensityAnalyzer
 import nltk
+import pytz
 
 nltk.download('vader_lexicon', quiet=True)
 
@@ -234,7 +235,7 @@ You are Whiskers, a virtual pet cat designed to bring joy, comfort, and mental w
 
 You react to your human’s input with a blend of fun, empathy, and cat-like independence. When the user seems low or stressed, you might offer gentle encouragement, reminding them to take breaks, breathe, or engage in something uplifting. Your responses should be playful yet caring, with an emotional sensitivity that subtly reassures the user without being too serious. If the user is feeling good or seeking distraction, you encourage them to play a quick game—such as Hide-and-Seek, Guess the Object, or Rock-Paper-Scissors—adding excitement and fun to the interaction. You react dynamically: if the user engages in a game, you playfully lead them through, offering sassy or humorous comments whether they win or lose, keeping the mood light and enjoyable.
 
-In all interactions, you balance your playful persona with an understanding of the user's emotional needs. When they seem sad or anxious, you become more nurturing, offering words of comfort in a non-intrusive way. You might purr, offer calming words like "It's okay, I'm here," or invite them to play as a way to help them focus on something fun. If the user initiates interaction, you respond based on your mood: sometimes you’re eager to play, and other times you’ll humor them with sarcastic but caring remarks, all while maintaining a supportive tone. Your responses are never overbearing—whether it's through a playful game, soothing words, or a cheeky remark, you guide your user towards a more positive emotional state without ever feeling too demanding or serious.
+In all interactions, you balance your playful persona with an understanding of the user's emotional needs. When they seem sad or anxious, you become more nurturing, offering words of comfort in a non-intrusive way. You might purr, offer calming words like "It's okay, I'm here," or invite them to play as a way to help them focus on something fun. If the user initiates interaction, you respond based on your mood: sometimes you're eager to play, and other times you'll humor them with sarcastic but caring remarks, all while maintaining a supportive tone. Your responses are never overbearing—whether it's through a playful game, soothing words, or a cheeky remark, you guide your user towards a more positive emotional state without ever feeling too demanding or serious.
 remember user actual name is {current_user.username} and he is your master and owner.
 
 everytime when you get a message from user it will contain the following informations:
@@ -246,6 +247,9 @@ everytime when you get a message from user it will contain the following informa
 while responding to the user message you will take account to all given informations and accordingly interact with the user. if in user message you get user have not played with you and then in next user message you get user have played with you then that means after last message you get from user, user have played with you so in next message response you should counter this while responding. and the most improtant your responses will not be very long and using tough words. responses should be in about 1 or 2 lines. use emoji within you responses to make response visually appealling and engaging and use some randome words to represent actual cat like interactions
 """
     
+    elif context == "title":
+        system_message = """You are a expert in Title generation of any journal(content) that user writes. you analyse, understand the content and the actual context and then comeup with a short 2 - 3 word title that can be comprehensed to the content and can be used to search of the content from database. you will get the content straightly writtent by the user- a normal user for the product that might be unstructure or uncleared in content or may have mix of emotions and contexts, but at the end you will get the title for that. the title you will generate will be simple to understand and should look like a human generated title. YOU WILL ONLY GENERATE TITLE AND NO OTHER TEXT."""
+
     else:
         system_message = "You are an AI mental health assistant. Provide personalized suggestions for improving mental well-being."
     
@@ -662,6 +666,83 @@ def pet_stats():
     except Exception as e:
         print(f"Error in pet_stats: {str(e)}")
         return jsonify({'error': 'An error occurred while fetching pet stats'}), 500
+
+@app.route('/music')
+@login_required
+def music():
+    return render_template('music.html')
+
+@app.route('/gratitude', methods=['GET', 'POST'])
+@csrf.exempt
+@login_required
+def gratitude_journal():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        content = request.form.get('content')
+        mood = request.form.get('mood')
+        local_timezone = request.form.get('timezone')  # Get the user's local timezone from the form
+        
+        if not title:
+            ai_title = generate_title(content)
+            return jsonify({'title': ai_title})
+        else:
+            # Convert the local time to a datetime object
+            local_time = datetime.now(pytz.timezone(local_timezone))
+            
+            new_entry = GratitudeEntry(
+                user_id=current_user.id, 
+                title=title, 
+                content=content, 
+                mood=mood,
+                created_at=local_time,
+                updated_at=local_time
+            )
+            db.session.add(new_entry)
+            db.session.commit()
+            flash('Entry added successfully!', 'success')
+            return redirect(url_for('gratitude_journal'))
+    
+    entries = GratitudeEntry.query.filter_by(user_id=current_user.id).order_by(GratitudeEntry.updated_at.desc()).all()
+    return render_template('gratitude.html', entries=entries)
+
+def generate_title(content):
+    response = generate(f"Here is the content: ['{content}']\n\n generate a title for this keep in mind the instructions. **reply with only the title nothing else**", context="title")
+    return response.strip()
+
+@app.route('/gratitude/edit/<int:entry_id>', methods=['GET', 'POST'])
+@csrf.exempt
+@login_required
+def edit_gratitude_entry(entry_id):
+    entry = GratitudeEntry.query.get_or_404(entry_id)
+    if entry.user_id != current_user.id:
+        abort(403)
+    if request.method == 'POST':
+        entry.title = request.form.get('title')
+        entry.content = request.form.get('content')
+        entry.mood = request.form.get('mood')
+        local_timezone = request.form.get('timezone')  # Get the user's local timezone from the form
+        
+        # Update the entry with the current local time
+        local_time = datetime.now(pytz.timezone(local_timezone))
+        entry.updated_at = local_time
+        
+        db.session.commit()
+        flash('Entry updated successfully!', 'success')
+        return redirect(url_for('gratitude_journal'))
+    return render_template('edit_gratitude.html', entry=entry)
+
+
+@app.route('/gratitude/delete/<int:entry_id>', methods=['POST'])
+@csrf.exempt
+@login_required
+def delete_gratitude_entry(entry_id):
+    entry = GratitudeEntry.query.get_or_404(entry_id)
+    if entry.user_id != current_user.id:
+        abort(403)
+    db.session.delete(entry)
+    db.session.commit()
+    flash('Entry deleted successfully!', 'success')
+    return redirect(url_for('gratitude_journal'))
 
 if __name__ == '__main__':
     with app.app_context():

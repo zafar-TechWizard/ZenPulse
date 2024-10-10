@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Games - ZenPulse</title>
+    <title>Edit Gratitude Entry - ZenPulse</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/games.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gratitude.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
     <div class="dashboard">
@@ -21,9 +23,9 @@
                 </button>
             </div>
             <nav class="sidebar-nav">
-                <button class="nav-button" onclick="window.location.href='{{ url_for('dashboard') }}'"><img src="{{ url_for('static', filename='images/home.png') }}" alt="Home"></button>
+                <button class="nav-button active"><img src="{{ url_for('static', filename='images/home.png') }}" alt="Home"></button>
                 <button class="nav-button" onclick="window.location.href='{{ url_for('chat') }}'"><img src="{{ url_for('static', filename='images/chatbot.png') }}" alt="AI Chat"></button>
-                <button class="nav-button active"  onclick="window.location.href='{{ url_for('game') }}'"><img src="{{ url_for('static', filename='images/game-pad.png') }}" alt="Game"></button>
+                <button class="nav-button"  onclick="window.location.href='{{ url_for('game') }}'"><img src="{{ url_for('static', filename='images/game-pad.png') }}" alt="Game"></button>
                 <button class="nav-button" onclick="window.location.href='{{ url_for('pet') }}'"><img src="{{ url_for('static', filename='images/paw.png') }}" alt="Pet"></button>
                 <button class="nav-button" onclick="window.location.href='{{ url_for('music') }}'"><img src="{{ url_for('static', filename='images/music-notes.png') }}" alt="music"></button>
                 <button class="nav-button" onclick="window.location.href='{{ url_for('gratitude_journal') }}'"><img src="{{ url_for('static', filename='images/gratitude.png') }}" alt="Gratitude"></button>
@@ -68,13 +70,43 @@
                 </div>
             </header>
             <div class="main-content">
-                <div class="under-development">
-                    <h2>Under development...</h2>
-                    <p>Exciting games are coming soon!</p>
+                <div class="container">
+                    <section class="gratitude-header">
+                        <h1><i class="fas fa-edit"></i> Edit Gratitude Entry</h1>
+                        <a href="{{ url_for('gratitude_journal') }}" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Journal</a>
+                    </section>
+                    
+                    <section class="edit-entry">
+                        <form method="POST" class="gratitude-form">
+                            <input type="text" name="title" value="{{ entry.title }}" required>
+                            <textarea name="content" required>{{ entry.content }}</textarea>
+                            <div class="form-footer">
+                                <div class="mood-selector">
+                                    <label for="mood">How did you feel?</label>
+                                    <select name="mood" id="mood">
+                                        <option value="happy" {% if entry.mood == 'happy' %}selected{% endif %}>😄 Happy</option>
+                                        <option value="content" {% if entry.mood == 'content' %}selected{% endif %}>😊 Content</option>
+                                        <option value="neutral" {% if entry.mood == 'neutral' %}selected{% endif %}>😐 Neutral</option>
+                                        <option value="anxious" {% if entry.mood == 'anxious' %}selected{% endif %}>😰 Anxious</option>
+                                        <option value="sad" {% if entry.mood == 'sad' %}selected{% endif %}>😢 Sad</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" name="timezone" id="timezone">
+                                <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Update Entry</button>
+                            </div>
+                        </form>
+                    </section>
                 </div>
             </div>
         </main>
     </div>
-    <script src="{{ url_for('static', filename='js/games.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/gratitude.js') }}"></script>
+    <script>
+        // Set the timezone input value when the form is submitted
+        document.querySelector('.gratitude-form').addEventListener('submit', function() {
+            document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        });
+    </script>
 </body>
 </html>

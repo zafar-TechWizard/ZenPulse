@@ -1,0 +1,62 @@
+
+.card {
+    aspect-ratio: 1 / 1;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.card-inner {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+
+
+#reset-game {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#reset-game:hover {
+    background-color: #2980b9;
+}
+
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 80px); /* Adjust based on your header height */
+}
+
+.under-development {
+    text-align: center;
+}
+
+.under-development h2 {
+    font-size: 2.5rem;
+    color: #931d6c;
+    animation: softBlink 2s ease-in-out infinite;
+}
+
+@keyframes softBlink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Dark theme support */
+body.dark-theme .under-development h2 {
+    color: #81c784;
+}

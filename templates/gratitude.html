@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gratitude Journal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gratitude.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <button class="nav-button menu-button">
+                    <div class="menu-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-button" onclick="window.location.href='{{ url_for('dashboard') }}'"><img src="{{ url_for('static', filename='images/home.png') }}" alt="Home"></button>
+                <button class="nav-button" onclick="window.location.href='{{ url_for('chat') }}'"><img src="{{ url_for('static', filename='images/chatbot.png') }}" alt="AI Chat"></button>
+                <button class="nav-button"  onclick="window.location.href='{{ url_for('game') }}'"><img src="{{ url_for('static', filename='images/game-pad.png') }}" alt="Game"></button>
+                <button class="nav-button" onclick="window.location.href='{{ url_for('pet') }}'"><img src="{{ url_for('static', filename='images/paw.png') }}" alt="Pet"></button>
+                <button class="nav-button" onclick="window.location.href='{{ url_for('music') }}'"><img src="{{ url_for('static', filename='images/music-notes.png') }}" alt="music"></button>
+                <button class="nav-button active" onclick="window.location.href='{{ url_for('gratitude_journal') }}'"><img src="{{ url_for('static', filename='images/gratitude.png') }}" alt="Gratitude"></button>
+            </nav>
+            <div class="sidebar-bottom">
+                <button class="nav-button logout-button" onclick="window.location.href='{{ url_for('logout') }}'"><img src="{{ url_for('static', filename='images/user-logout.png') }}" alt="Logout"></button>
+            </div>
+        </aside>
+        <main>
+            <header>
+                <div class="header-left">
+                    <div class="logo-container">
+                        <div class="logo">
+                            <img src="{{ url_for('static', filename='images/new-logo.png') }}" alt="Logo">
+                        </div>
+                    </div>
+                    <h1>ZenPulse</h1>
+                </div>
+                <div class="header-icons">
+                    <label class="theme-switch" for="theme-toggle">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider round">
+                            <i class="fas fa-sun"></i>
+                            <i class="fas fa-moon"></i>
+                        </span>
+                    </label>
+                </div>
+                <div class="search-profile">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search...">
+                        <button class="search-button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="profile-container">
+                        <img src="{{ url_for('static', filename='images/profile.png') }}" alt="Profile" class="profile-pic">
+                        <div class="profile-dropdown">
+                            <span class="username">{{ username }}</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="main-content">
+                <div class="container">
+                    <section class="gratitude-header">
+                        <h1><i class="fas fa-heart"></i> Gratitude Journal</h1>
+                        <a href="{{ url_for('dashboard') }}" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+                    </section>
+                    
+                    <section class="new-entry">
+                        <h2><i class="fas fa-pen"></i> What are you grateful for today?</h2>
+                        <form id="gratitudeForm" method="POST" class="gratitude-form">
+                            <input type="text" name="title" id="titleInput" placeholder="Enter a title (optional)">
+                            <textarea name="content" id="contentInput" placeholder="Express your gratitude here..." required></textarea>
+                            <input type="hidden" name="timezone" id="timezone">
+                            <div class="form-footer">
+                                <div class="mood-selector">
+                                    <label for="mood">How do you feel?</label>
+                                    <select name="mood" id="mood">
+                                        <option value="happy">😄 Happy</option>
+                                        <option value="content">😊 Content</option>
+                                        <option value="neutral">😐 Neutral</option>
+                                        <option value="anxious">😰 Anxious</option>
+                                        <option value="sad">😢 Sad</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Save Entry</button>
+                            </div>
+                        </form>
+                    </section>
+            
+                    <section class="entries-list">
+                        <h2><i class="fas fa-book-open"></i> Your Gratitude Journey</h2>
+                        {% for entry in entries %}
+                        <div class="entry">
+                            <div class="entry-header">
+                                <span class="entry-date"><i class="far fa-calendar-alt"></i> {{ entry.updated_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                                <span class="entry-mood">Mood: 
+                                    {% if entry.mood == 'happy' %}😄
+                                    {% elif entry.mood == 'content' %}😊
+                                    {% elif entry.mood == 'neutral' %}😐
+                                    {% elif entry.mood == 'anxious' %}😰
+                                    {% elif entry.mood == 'sad' %}😢
+                                    {% endif %}
+                                    {{ entry.mood }}
+                                </span>
+                            </div>
+                            <p class="entry-content">{{ entry.content }}</p>
+                            <div class="entry-actions">
+                                <a href="{{ url_for('edit_gratitude_entry', entry_id=entry.id) }}" class="edit-btn"><i class="fas fa-edit"></i> Edit</a>
+                                <form method="POST" action="{{ url_for('delete_gratitude_entry', entry_id=entry.id) }}" class="delete-form">
+                                    <button type="submit" class="delete-btn"><i class="fas fa-trash-alt"></i> Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script> -->
+    <script src="{{ url_for('static', filename='js/gratitude.js') }}"></script>
+    <script>
+        // Set the timezone input value when the form is submitted
+        document.querySelector('.gratitude-form').addEventListener('submit', function() {
+            document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        });
+    </script>
+</body>
+</html>

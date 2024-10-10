@@ -57,11 +57,11 @@ Thumbs.db
 *.bak
 
 # Project specific files (adjust paths as needed)
-MAIN_APP/image.png
-MAIN_APP/layout.jpg
-MAIN_APP/reference-1.png
-MAIN_APP/reference.png
-
+C:\Users\mdzaf\OneDrive\Desktop\Code\ZenPulse\MAIN_APP\image.png
+C:\Users\mdzaf\OneDrive\Desktop\Code\ZenPulse\MAIN_APP\layout.jpg
+C:\Users\mdzaf\OneDrive\Desktop\Code\ZenPulse\MAIN_APP\reference-1.png
+C:\Users\mdzaf\OneDrive\Desktop\Code\ZenPulse\MAIN_APP\reference.png
+C:\Users\mdzaf\OneDrive\Desktop\Code\ZenPulse\MAIN_APP\image.png
 # Jupyter Notebook
 .ipynb_checkpoints
 

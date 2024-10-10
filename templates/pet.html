@@ -27,7 +27,8 @@
                 <button class="nav-button" onclick="window.location.href='{{ url_for('chat') }}'"><img src="{{ url_for('static', filename='images/chatbot.png') }}" alt="AI Chat"></button>
                 <button class="nav-button" onclick="window.location.href='{{ url_for('game') }}'"><img src="{{ url_for('static', filename='images/game-pad.png') }}" alt="Game"></button>
                 <button class="nav-button active" onclick="window.location.href='{{ url_for('pet') }}'"><img src="{{ url_for('static', filename='images/paw.png') }}" alt="Pet"></button>
-                <button class="nav-button"><img src="{{ url_for('static', filename='images/music-notes.png') }}" alt="music"></button>
+                <button class="nav-button" onclick="window.location.href='{{ url_for('music') }}'"><img src="{{ url_for('static', filename='images/music-notes.png') }}" alt="music"></button>
+                <button class="nav-button" onclick="window.location.href='{{ url_for('gratitude_journal') }}'"><img src="{{ url_for('static', filename='images/gratitude.png') }}" alt="Gratitude"></button>
             </nav>
             <div class="sidebar-bottom">
                 <button class="nav-button logout-button" onclick="window.location.href='{{ url_for('logout') }}'"><img src="{{ url_for('static', filename='images/user-logout.png') }}" alt="Logout"></button>
