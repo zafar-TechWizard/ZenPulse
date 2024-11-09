@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendButton = document.getElementById('send-button');
     const themeToggle = document.getElementById('theme-toggle');
     const promptButtons = document.querySelectorAll('.prompt-button');
+    const clearChatButton = document.getElementById('clear-chat');
 
     let conversationHistory = [];
 
@@ -113,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return data.response;
         } catch (error) {
             console.error('Error:', error);
-            return "I'm sorry, I'm having trouble processing your request right now. Please try again later. ${userMessage}", userMessage;
+            return "I'm sorry, I'm having trouble processing your request right now. Please try again later. ${userMessage}";
         }
     }
 
@@ -154,4 +155,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial greeting message
     addMessage("Hello! I'm your virtual psychiatrist. How are you feeling today?");
+
+    clearChatButton.addEventListener('click', function() {
+        if (confirm('Are you sure you want to clear the entire chat history? This action cannot be undone.')) {
+            // Add ripple effect to messages before clearing
+            const messages = document.querySelectorAll('.message');
+            
+            // Reverse the messages array to animate from bottom to top
+            Array.from(messages).reverse().forEach((message, index) => {
+                setTimeout(() => {
+                    message.classList.add('clearing');
+                    // Add subtle shake effect to remaining messages
+                    const remainingMessages = Array.from(messages).slice(index + 1);
+                    remainingMessages.forEach(msg => {
+                        msg.style.transform = 'translateX(-2px)';
+                        setTimeout(() => {
+                            msg.style.transform = 'translateX(0)';
+                        }, 50);
+                    });
+                }, index * 150); // Increased delay for smoother animation
+            });
+
+            fetch('/clear_chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Wait for all animations to complete
+                    setTimeout(() => {
+                        const chatMessages = document.getElementById('chat-messages');
+                        chatMessages.style.opacity = '0';
+                        setTimeout(() => {
+                            chatMessages.innerHTML = '';
+                            chatMessages.style.opacity = '1';
+                        }, 300);
+                    }, messages.length * 150 + 800);
+                } else {
+                    alert('Failed to clear chat history. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while clearing chat history.');
+            });
+        }
+    });
 });

@@ -74,15 +74,21 @@
                         <p class="quote">{{ quote }}</p>
                     </div>
                     <div class="mental-health-stats">
-                        <div class="stat">
-                            <span>Streak</span>
-                            <strong>7 days <span class="arrow">↗</span></strong>
+                        <div class="stat ">
+                            <span>Total Gratitude</span>
+                            <strong>{{ day }}</strong>
                         </div>
                         <div class="stat">
-                            <span>Mood Today</span>
-                            <strong class="mood-indicator">😊 Good</strong>
+                            <span>Last mood</span>
+                            <strong class="mood-indicator">{% if mood == 'happy' %}😄
+                                {% elif mood == 'content' %}😊
+                                {% elif mood == 'neutral' %}😐
+                                {% elif mood == 'anxious' %}😰
+                                {% elif mood == 'sad' %}😢
+                                {% endif %}
+                            </strong>
                         </div>
-                        <button class="start-activity-btn">Start Activity</button>
+                        <button class="start-activity-btn" onclick="window.location.href='{{ url_for('gratitude_journal') }}'">Reflect on Your Day</button>
                     </div>
                 </section>
                 <div class="dashboard-grid">
@@ -148,17 +154,20 @@
                         </div>
                     </section>
                     <section class="mood-tracker">
-                        <h3>How are you feeling today?</h3>
-                        <form id="mood-form">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <div class="mood-options">
-                                <button type="button" name="mood" value="1" class="mood-button">😢</button>
-                                <button type="button" name="mood" value="2" class="mood-button">😕</button>
-                                <button type="button" name="mood" value="3" class="mood-button">😐</button>
-                                <button type="button" name="mood" value="4" class="mood-button">🙂</button>
-                                <button type="button" name="mood" value="5" class="mood-button">😄</button>
-                            </div>
-                        </form>
+                        <section class="mood-history">
+                            <h3>How are you feeling today?</h3>
+                            <form id="mood-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <div class="mood-options">
+                                    <button type="button" name="mood" value="1" class="mood-button">😢</button>
+                                    <button type="button" name="mood" value="2" class="mood-button">😕</button>
+                                    <button type="button" name="mood" value="3" class="mood-button">😐</button>
+                                    <button type="button" name="mood" value="4" class="mood-button">🙂</button>
+                                    <button type="button" name="mood" value="5" class="mood-button">😄</button>
+                                </div>
+                            </form>
+                        </section>
+                        <br>
                         <section class="mood-history">
                             <h3>Your Mood History</h3>
                             <canvas id="moodChart"></canvas>

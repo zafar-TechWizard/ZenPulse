@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="MAIN_APP/static/images/new-logo.png" alt="ZenPulse Logo" width="200"/>
+  <img src="static/images/new-logo.png" alt="ZenPulse Logo" width="300" height="auto"/>
 
   # ZenPulse: Empowering Mental Wellness
 

@@ -87,7 +87,11 @@
                         </div>
                     </div>
                     <div class="chat-content" id="chat-messages">
-                        
+                        <div class="typing-indicator">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
                     </div>
                     <div class="chat-input-container">
                         <div class="input-wrapper">
@@ -129,5 +133,36 @@
         </main>
     </div>
     <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const clearChatButton = document.getElementById('clear-chat');
+        
+        clearChatButton.addEventListener('click', function() {
+            if (confirm('Are you sure you want to clear the entire chat history? This action cannot be undone.')) {
+                fetch('/clear_chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Chat history cleared successfully!');
+                        // Clear the chat messages from the UI
+                        document.getElementById('chat-messages').innerHTML = '';
+                    } else {
+                        alert('Failed to clear chat history. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while clearing chat history.');
+                });
+            }
+        });
+    });
+    </script>
 </body>
 </html>

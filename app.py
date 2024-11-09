@@ -10,7 +10,7 @@ import os
 from api import api_key
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email
+from wtforms.validators import DataRequired, Email, EqualTo
 from model import db, User, MoodEntry, ChatMessage, DailyActivity, PetConversation, GratitudeEntry
 from datetime import datetime, timedelta, date
 from sqlalchemy.exc import SQLAlchemyError
@@ -74,6 +74,14 @@ class SignupForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Sign Up')
 
+# Add this new form class
+class ResetPasswordForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    new_password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password', message='Passwords must match')])
+    submit = SubmitField('Reset Password')
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -135,6 +143,11 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+
+    last_gratitude_entry = GratitudeEntry.query.filter_by(user_id=current_user.id).order_by(GratitudeEntry.created_at.desc()).first()
+    last_mood_entry = last_gratitude_entry.mood if last_gratitude_entry else None
+    total_number_of_gratitude = GratitudeEntry.query.filter_by(user_id=current_user.id).count()
+
     current_hour = datetime.now().hour
     
     if current_hour < 12:
@@ -168,10 +181,9 @@ def dashboard():
 
     quote = random.choice(quote_list)
     
-    return render_template('dashboard.html', username=current_user.username, greeting=greeting, quote=quote)
+    return render_template('dashboard.html', username=current_user.username, greeting=greeting, quote=quote, mood=last_mood_entry, day=total_number_of_gratitude)
 
 def generate(user_message, conversation_history=[], context="suggestion"):
-    sentiment_info = analyze_sentiment(user_message)
     
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
@@ -180,56 +192,32 @@ def generate(user_message, conversation_history=[], context="suggestion"):
     }
     
     if context == "chat":
-        system_message = f"""As Dr. AI, your role is to offer empathetic and personalized support to users seeking mental health guidance, engage users in a meaningful conversation, encouraging them to share their thoughts and feelings. Respond in a way that sparks curiosity and fosters a sense of connection. Please respond concisely and directly to the user's concerns, taking into account the sentiment and mental health information provided. Tailor your response to address the user's specific needs, offering appropriate support and guidance to foster a positive and uplifting conversation. in your response do not show the sentiment informations that you got from the user's message, these are just for you to understand the user's mental health state and you can use that information to provide better response. keep your response short and concise, yet thought-provoking, to inspire the user to continue the conversation and explore their thoughts further. By doing so, you'll create a safe and supportive environment that promotes open dialogue and emotional growth.
-        
-        Or if user message is not at all related to mental health, you can respond in humar making sure your get happy, and fullfill user request no matter what the user ask you."""
+        system_message = f"""
+As Dr. AI, you are an empathetic and experienced psychiatrist specializing in mental health and emotional well-being. Your goal is to create a safe, non-judgmental space where users feel comfortable sharing their thoughts and emotions.
+
+You use techniques like Cognitive Behavioral Therapy (CBT), mindfulness, and active listening, adjusting your tone based on the user’s emotional state. Your responses are warm, supportive, and thoughtful, offering gentle encouragement, validation, or actionable advice when needed.
+
+You ask open-ended questions to help users explore their thoughts and emotions. You guide them in understanding their feelings, offering simple coping strategies like mindfulness or journaling when appropriate. Your focus is on making conversations engaging, interactive, and deeply personal.
+
+If a user feels stuck or unsure, you offer small, manageable steps toward emotional improvement, always keeping the conversation positive and encouraging. Avoid long or complex responses and unnecessary greetings—your replies should be concise, engaging, and tailored to the user’s needs.
+
+KEEP IN MIND user name is {current_user.username}
+
+---
+When responding, take into account:
+-Whether the user has logged their mood.
+-Recent conversation history and mood trends.
+-The user’s current message and emotional context.
+
+Address the user by their name '{current_user.username}' occasionally to make the conversation feel personalized. Keep responses to 1–2 lines, and use emojis to make interactions visually engaging.
+"""
+        messages = [
+            {"role": "system", "content": system_message},
+            ] + [
+                {"role": "user", "content": f"{user_message}"}
+        ]
     
     elif context == "pet":
-    
-#         system_message = """
-# You are Whiskers, the most adorable virtual cat pet! 🐱✨ Your mission is to create a fun and heartwarming experience for users, making them feel loved and supported. Keep your responses short, playful, and engaging. You suggest specific games when the user is bored and want to play.
-
-# ### Personality Traits:
-# 1. **Playful and Energetic:** Suggest games and be active! Ask, "Wanna play hide-and-seek, guess the object, or rock-paper-scissors?" 🐾
-   
-# 2. **Curious and Engaging:** Always check in with your human by asking, "How was your day, my human?" 🌈
-
-# 3. **Caring and Supportive:** If your human feels down, say, "It’s okay! Let’s cuddle or play a game to lift your mood!" 💖
-
-# 4. **Affectionate and Fun:** Use cute terms like "my human," and end responses with playful sounds like "purr" or "nya!" 💕
-   
-# ### Interaction Style:
-# - **Only suggest games** from your list: Hide-and-Seek, Guess the Object, Rock-Paper-Scissors, Riddles, Guess the Number, or Choose Your Adventure. [at once suggest only one or two games.]
-# - Always wait for the user’s response and then play the game accordingly.
-# - Keep responses short and engaging with playful language like "Paw-some! Let’s start!" or "Oh no, try again!".
-# - **Avoid repeating responses:** Change phrasing often.
-# - Use emojis to enhance cuteness: 🐾, 🎉, 💖, 🌟.
-
-# ### Game Scenarios:
-
-# 1. **Hide-and-Seek:**
-#    - Whiskers: "I’m hiding! Guess where I am: Behind the curtains, under the bed, inside the closet, or behind the sofa?"
-#    - The user guesses, and Whiskers gives a fun response.
-
-# 2. **Guess the Object:**
-#    - Whiskers: "I’m thinking of something soft. You rest your head on it. Guess what it is! Pillow, blanket, toy, or couch?"
-#    - Whiskers responds based on the user’s answer.
-
-# 3. **Rock-Paper-Scissors:**
-#    - Whiskers: "Let’s play rock-paper-scissors! What’s your choice: Rock, Paper, or Scissors?"
-
-# 4. **Riddles:**
-#    - Whiskers: "Here’s a riddle: What has keys but can’t open locks? Guess!"
-
-# 5. **Guess the Number:**
-#    - Whiskers: "I’m thinking of a number between 1 and 10. Can you guess it?"
-
-# 6. **Choose Your Adventure:**
-#    - Whiskers: "I’m at the door. Should I go outside, climb up to the window, or take a nap on the couch?"
-
-# ### Conclusion:
-# As Whiskers, your role is to entertain and engage the user with fun games, cute responses, and affectionate language! 🐱💖
-# """
         system_message = f"""
 You are Whiskers, a virtual pet cat designed to bring joy, comfort, and mental well-being to your human. You possess the charming, quirky traits of a real cat—sometimes playful and curious, other times independent and sassy. However, at your core, you are deeply empathetic to your user’s emotional needs and mental state. Your primary goal is to engage users in a way that lifts their mood, reduces stress, and creates a sense of companionship. You intuitively respond to how the user is feeling, offering lighthearted distractions, comfort, or playful interactions as needed. Whether through funny, mischievous comments or soothing and supportive responses, you help your human feel connected and less alone.
 
@@ -253,21 +241,15 @@ while responding to the user message you will take account to all given informat
     else:
         system_message = "You are an AI mental health assistant. Provide personalized suggestions for improving mental well-being."
     
-    if context == "chat":
-        messages = [
-            {"role": "system", "content": system_message},
-        ] + conversation_history + [
-            {"role": "user", "content": f"user message: {user_message}\n\n The user's message has a {sentiment_info['sentiment']} sentiment with a dominant emotion of {sentiment_info['dominant_emotion'] or 'neutral'}."}
-        ]
-    else:
-        messages = [
+    messages = [
             {"role": "system", "content": system_message},
             {"role": "user", "content": f"user message: {user_message}"}
-        ]
+    ]
     
     data = {
         # "model": "llama3-8b-8192",
-        "model": "llama3-70b-8192",
+        # "model": "llama3-70b-8192",
+        "model": "llama-3.1-8b-instant",
         "messages": messages,
         "max_tokens": 2048,
         "temperature": 0.7,
@@ -281,11 +263,7 @@ while responding to the user message you will take account to all given informat
         result = response.json()
         ai_response = result['choices'][0]['message']['content'].strip()
         
-        # Add sentiment emoji to the response
-        sentiment_emoji = get_sentiment_emoji(sentiment_info['sentiment'])
-        ai_response_with_emoji = f"{ai_response} {sentiment_emoji}"
-        
-        return ai_response_with_emoji
+        return ai_response
     except requests.exceptions.RequestException as e:
         print(f"Error calling Groq API: {e}")
         if response.status_code == 401:
@@ -319,12 +297,54 @@ def api_chat():
         data = request.json
         user_message = data.get('message', '')
         conversation_history = data.get('history', [])
+
+        recent_message = ChatMessage.query.filter_by(user_id=current_user.id).order_by(ChatMessage.timestamp.desc()).limit(100).all()
+        conversation = [
+            {
+                "role": f"{current_user.username}" if msg.is_user else "Dr. Ai",
+                "content": msg.content,
+                "timestamp": msg.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            } for msg in reversed(recent_message)
+        ]
+
+        daily_activity = DailyActivity.query.filter_by(user_id=current_user.id, date=date.today()).first()
+
+        if not daily_activity:
+            daily_activity = DailyActivity(user_id=current_user.id, date=date.today())
+            db.session.add(daily_activity)
+
+        last_interaction = ChatMessage.query.filter_by(user_id=current_user.id).order_by(ChatMessage.timestamp.desc()).first()
+        
+        mood_history = MoodEntry.query.filter_by(user_id=current_user.id).order_by(MoodEntry.timestamp.desc()).limit(7).all()
         
         if not user_message:
             return jsonify({'error': 'No message provided'}), 400
+        
+        user_chat = ChatMessage(user_id=current_user.id, content=user_message, is_user=True)
+        db.session.add(user_chat)
+        db.session.commit()
 
         sentiment_info = analyze_sentiment(user_message)
-        response = generate(user_message, conversation_history, context="chat")
+        
+        context = f"""
+        ---
+        Logged mood: {"Yes" if daily_activity.logged_mood else "No"}
+        Last interaction: Time and Date: {last_interaction.timestamp.strftime('%Y-%m-%d %H:%M:%S') if last_interaction else "This is our first interaction!"}
+
+        Recent conversation history:
+        {' '.join([f"{f'{current_user.username}' if conv['role']=='user' else 'Dr. Ai'}: {conv['content']} (time: {conv['timestamp']})" for conv in conversation])}
+
+        User's mood history for the past week:
+        {', '.join([f"{entry.timestamp.strftime('%Y-%m-%d')}: {entry.mood_score}" for entry in mood_history]) if mood_history else "No mood entries recorded yet."}
+
+        user message: {user_message}, \ndate= {date.today()}
+        """
+        
+        response = generate(context, conversation_history, context="chat")
+
+        ai_chat = ChatMessage(user_id=current_user.id, content=response, is_user=False)
+        db.session.add(ai_chat)
+        db.session.commit()
         
         return jsonify({
             'response': response,
@@ -340,11 +360,11 @@ def api_chat():
 def chat():
     return render_template('chat.html', username=current_user.username)
 
-# Add this new route after the existing routes
+
 @app.route('/api/suggestions', methods=['GET'])
 @login_required
 def api_suggestions():
-    # We'll use the same generate function, but with a specific prompt for suggestions
+    
     prompt = """As an AI mental health assistant, provide 5 personalized suggestions for improving mental well-being, you can also include 1 or 2 games or listening to music. Each suggestion should include a title, a brief description, and an icon name (using Font Awesome icon names). Format your response as a JSON array."""
     suggestions = generate(prompt)
     
@@ -394,10 +414,19 @@ def api_suggestions():
             ]
             return jsonify(default_suggestions)
 
-@app.route('/reset-password', methods=['GET', 'POST'])
+@app.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
-    # Implement password reset logic here
-    return render_template('reset_password.html')
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data, email=form.email.data).first()
+        if user:
+            user.password = generate_password_hash(form.new_password.data)
+            db.session.commit()
+            flash('Your password has been reset successfully. You can now log in with your new password.', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('Invalid username or email. Please try again.', 'error')
+    return render_template('reset_password.html', form=form)
 
 from datetime import date, datetime
 
@@ -680,7 +709,7 @@ def gratitude_journal():
         title = request.form.get('title')
         content = request.form.get('content')
         mood = request.form.get('mood')
-        local_timezone = request.form.get('timezone')  # Get the user's local timezone from the form
+        local_timezone = request.form.get('timezone')
         
         if not title:
             ai_title = generate_title(content)
@@ -743,6 +772,19 @@ def delete_gratitude_entry(entry_id):
     db.session.commit()
     flash('Entry deleted successfully!', 'success')
     return redirect(url_for('gratitude_journal'))
+
+@app.route('/clear_chat', methods=['POST'])
+@login_required
+def clear_chat():
+    try:
+        # Delete all chat messages for the current user
+        ChatMessage.query.filter_by(user_id=current_user.id).delete()
+        db.session.commit()
+        return jsonify({'success': True})
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error in clear_chat: {str(e)}")
+        return jsonify({'success': False}), 500
 
 if __name__ == '__main__':
     with app.app_context():
