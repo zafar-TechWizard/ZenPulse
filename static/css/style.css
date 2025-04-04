@@ -803,3 +803,79 @@ footer {
   color: #d4edda;
   border-color: #1e7e34;
 }
+
+.auth-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.nav-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.nav-button i {
+    font-size: 1rem;
+}
+
+.nav-button.primary {
+    background-color: var(--primary-color);
+    color: var(--light-color);
+    border: 2px solid var(--primary-color);
+}
+
+.nav-button.primary:hover {
+    background-color: #8f4ad3;
+    border-color: #8f4ad3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-button.secondary {
+    background-color: transparent;
+    color: var(--text-color);
+    border: 2px solid var(--text-color);
+}
+
+.nav-button.secondary:hover {
+    background-color: var(--text-color);
+    color: var(--background-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark theme styles for buttons */
+.dark-theme .nav-button.secondary {
+    background-color: #E0E0E0;
+    border-color: #E0E0E0;
+    color: #1A1A1A;
+}
+
+.dark-theme .nav-button.secondary:hover {
+    background-color: #7e7979;
+    border-color: #E0E0E0;
+    color: #E0E0E0;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .auth-buttons {
+        width: 100%;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .nav-button {
+        width: 100%;
+        justify-content: center;
+    }
+}

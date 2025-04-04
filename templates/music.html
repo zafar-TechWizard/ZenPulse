@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Games - ZenPulse</title>
+    <title>Music - ZenPulse</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/music.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -23,7 +23,7 @@
             <nav class="sidebar-nav">
                 <button class="nav-button" onclick="window.location.href='{{ url_for('dashboard') }}'"><img src="{{ url_for('static', filename='images/home.png') }}" alt="Home"></button>
                 <button class="nav-button" onclick="window.location.href='{{ url_for('chat') }}'"><img src="{{ url_for('static', filename='images/chatbot.png') }}" alt="AI Chat"></button>
-                <button class="nav-button"  onclick="window.location.href='{{ url_for('game') }}'"><img src="{{ url_for('static', filename='images/game-pad.png') }}" alt="Game"></button>
+                <button class="nav-button" onclick="window.location.href='{{ url_for('game') }}'"><img src="{{ url_for('static', filename='images/game-pad.png') }}" alt="Game"></button>
                 <button class="nav-button" onclick="window.location.href='{{ url_for('pet') }}'"><img src="{{ url_for('static', filename='images/paw.png') }}" alt="Pet"></button>
                 <button class="nav-button active" onclick="window.location.href='{{ url_for('music') }}'"><img src="{{ url_for('static', filename='images/music-notes.png') }}" alt="music"></button>
                 <button class="nav-button" onclick="window.location.href='{{ url_for('gratitude_journal') }}'"><img src="{{ url_for('static', filename='images/gratitude.png') }}" alt="Gratitude"></button>
@@ -32,45 +32,159 @@
                 <button class="nav-button logout-button" onclick="window.location.href='{{ url_for('logout') }}'"><img src="{{ url_for('static', filename='images/user-logout.png') }}" alt="Logout"></button>
             </div>
         </aside>
+        
         <main>
-            <header>
-                <div class="header-left">
-                    <div class="logo-container">
-                        <div class="logo">
-                            <img src="{{ url_for('static', filename='images/new-logo.png') }}" alt="Logo">
-                        </div>
-                    </div>
-                    <h1>ZenPulse</h1>
-                </div>
-                <div class="header-icons">
-                    <label class="theme-switch" for="theme-toggle">
-                        <input type="checkbox" id="theme-toggle">
-                        <span class="slider round">
-                            <i class="fas fa-sun"></i>
-                            <i class="fas fa-moon"></i>
-                        </span>
-                    </label>
-                </div>
-                <div class="search-profile">
-                    <div class="search-bar">
-                        <input type="text" placeholder="Search...">
-                        <button class="search-button">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                    <div class="profile-container">
-                        <img src="{{ url_for('static', filename='images/profile.png') }}" alt="Profile" class="profile-pic">
-                        <div class="profile-dropdown">
-                            <span class="username">{{ username }}</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-                </div>
-            </header>
             <div class="main-content">
-                <div class="under-development">
-                    <h2>Under development...</h2>
-                    <p>Exciting games are coming soon!</p>
+                <header>
+                    <div class="header-left">
+                        <div class="logo-container">
+                            <div class="logo">
+                                <img src="{{ url_for('static', filename='images/new-logo.png') }}" alt="Logo">
+                            </div>
+                        </div>
+                        <h1>ZenPulse</h1>
+                    </div>
+                    <div class="header-icons">
+                        <label class="theme-switch" for="theme-toggle">
+                            <input type="checkbox" id="theme-toggle">
+                            <span class="slider round">
+                                <i class="fas fa-sun"></i>
+                                <i class="fas fa-moon"></i>
+                            </span>
+                        </label>
+                    </div>
+                    <div class="search-profile">
+                        <div class="search-bar">
+                            <input type="text" placeholder="Search for music...">
+                            <button class="search-button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div class="profile-container">
+                            <img src="{{ url_for('static', filename='images/profile.png') }}" alt="Profile" class="profile-pic">
+                            <div class="profile-dropdown">
+                                <span class="username">{{ username }}</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="music-container">
+                    <div class="music-left-section">
+                        <div class="current-mood-card">
+                            <h2>Your Current Mood</h2>
+                            <div class="mood-display">
+                                <span class="mood-emoji" id="currentMoodEmoji">😌</span>
+                                <span class="mood-text" id="currentMoodText">Calm</span>
+                            </div>
+                            <p class="mood-suggestion">Here's some music to match your mood</p>
+                        </div>
+
+                        <div class="music-player-card">
+                            <div class="player-info">
+                                <img src="" alt="Album Art" class="now-playing-img" id="albumArt">
+                                <div class="track-info">
+                                    <h3 id="trackTitle">Select a track</h3>
+                                    <p id="artistName">-</p>
+                                </div>
+                                <button class="favorite-btn" id="favoriteBtn">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+
+                            <div class="progress-container">
+                                <span id="currentTime">0:00</span>
+                                <div class="progress-bar">
+                                    <div class="progress" id="progress"></div>
+                                </div>
+                                <span id="duration">0:00</span>
+                            </div>
+
+                            <div class="player-controls">
+                                <button class="control-btn shuffle" id="shuffleBtn">
+                                    <i class="fas fa-random"></i>
+                                </button>
+                                <button class="control-btn previous" id="previousBtn">
+                                    <i class="fas fa-step-backward"></i>
+                                </button>
+                                <button class="control-btn play-pause" id="playPauseBtn">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="control-btn next" id="nextBtn">
+                                    <i class="fas fa-step-forward"></i>
+                                </button>
+                                <button class="control-btn repeat" id="repeatBtn">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+
+                            <div class="volume-control">
+                                <i class="fas fa-volume-up" id="volumeIcon"></i>
+                                <div class="volume-slider">
+                                    <input type="range" id="volumeSlider" min="0" max="100" value="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="music-right-section">
+                        <div class="mood-selection">
+                            <h3>Change Your Mood</h3>
+                            <div class="mood-buttons">
+                                <button class="mood-btn" data-mood="calm">
+                                    <span class="mood-emoji">😌</span>
+                                    <span class="mood-text">Calm</span>
+                                </button>
+                                <button class="mood-btn" data-mood="happy">
+                                    <span class="mood-emoji">😊</span>
+                                    <span class="mood-text">Happy</span>
+                                </button>
+                                <button class="mood-btn" data-mood="focused">
+                                    <span class="mood-emoji">🎯</span>
+                                    <span class="mood-text">Focused</span>
+                                </button>
+                                <button class="mood-btn" data-mood="energetic">
+                                    <span class="mood-emoji">⚡</span>
+                                    <span class="mood-text">Energetic</span>
+                                </button>
+                                <button class="mood-btn" data-mood="relaxed">
+                                    <span class="mood-emoji">🌅</span>
+                                    <span class="mood-text">Relaxed</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="playlist-tabs">
+                            <button class="tab-btn active" data-tab="recommendations">
+                                <i class="fas fa-magic"></i> Recommended
+                            </button>
+                            <button class="tab-btn" data-tab="favorites">
+                                <i class="fas fa-heart"></i> Favorites
+                            </button>
+                            <button class="tab-btn" data-tab="recent">
+                                <i class="fas fa-history"></i> Recent
+                            </button>
+                        </div>
+
+                        <div class="tracks-container">
+                            <div class="tab-content active" id="recommendationsContent">
+                                <div class="tracks-grid" id="recommendedTracks">
+                                    <!-- Tracks will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            <div class="tab-content" id="favoritesContent">
+                                <div class="tracks-grid" id="favoriteTracks">
+                                    <!-- Favorites will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            <div class="tab-content" id="recentContent">
+                                <div class="tracks-grid" id="recentTracks">
+                                    <!-- Recent tracks will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>

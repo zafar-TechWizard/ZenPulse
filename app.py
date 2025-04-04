@@ -1,7 +1,7 @@
 import json
 import random
 import re
-from flask import Flask, abort, render_template, redirect, url_for, request, flash, jsonify, current_app
+from flask import Flask, abort, render_template, redirect, url_for, request, flash, jsonify, current_app, Response
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import requests
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -699,7 +699,40 @@ def pet_stats():
 @app.route('/music')
 @login_required
 def music():
-    return render_template('music.html')
+    return render_template('music.html', username=current_user.username)
+
+@app.route('/api/stream/<track_id>')
+@login_required
+def stream_track(track_id):
+    try:
+        # For now, we'll use a simple streaming service
+        # In production, integrate with a proper music streaming API
+        track_url = f"https://api.example.com/tracks/{track_id}/stream"
+        response = requests.get(track_url, stream=True)
+        return Response(response.iter_content(chunk_size=1024),
+                      content_type='audio/mpeg')
+    except Exception as e:
+        app.logger.error(f"Error streaming track: {str(e)}")
+        abort(500)
+
+@app.route('/api/music/recommendations', methods=['GET'])
+@login_required
+def get_recommendations():
+    mood = request.args.get('mood', 'calm')
+    
+    # Sample recommendations based on mood
+    recommendations = {
+        'calm': [
+            {'id': 'calm1', 'title': 'Peaceful Piano', 'artist': 'Various Artists'},
+            {'id': 'calm2', 'title': 'Gentle Meditation', 'artist': 'Zen Masters'}
+        ],
+        'happy': [
+            {'id': 'happy1', 'title': 'Uplifting Beats', 'artist': 'Joy Division'},
+            {'id': 'happy2', 'title': 'Positive Vibes', 'artist': 'Happy Band'}
+        ]
+    }
+    
+    return jsonify(recommendations.get(mood, recommendations['calm']))
 
 @app.route('/gratitude', methods=['GET', 'POST'])
 @csrf.exempt

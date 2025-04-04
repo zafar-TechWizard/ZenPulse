@@ -13,6 +13,7 @@ class User(UserMixin, db.Model):
     chat_history = db.relationship('ChatMessage', backref='user', lazy=True)
     daily_activities = db.relationship('DailyActivity', backref='user', lazy=True)
     pet_conversations = db.relationship('PetConversation', backref='user', lazy=True)
+    music_preferences = db.relationship('MusicPreference', backref='user', lazy=True)
 
 class MoodEntry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -48,6 +49,14 @@ class PetConversation(db.Model):
     date = db.Column(db.Date, default=date.today)
 
     __table_args__ = (db.Index('idx_user_date', user_id, date),)
+
+class MusicPreference(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    preferred_mood = db.Column(db.String(50))
+    last_played = db.Column(db.String(100))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class GratitudeEntry(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -1,4 +1,4 @@
 import requests
 import json
 
-api_key = "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"
+api_key = "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"

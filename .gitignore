@@ -91,3 +91,11 @@ ENV/
 
 # Pyre type checker
 .pyre/
+
+
+# Ignore all image.png files in any directory
+**/image.png
+
+# Ignore instance folder
+instance/
+**/instance/
