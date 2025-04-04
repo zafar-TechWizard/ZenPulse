@@ -11,7 +11,7 @@
 
   <strong>Nurture Your Mind, Empower Your Well-being</strong>
 
-  [Features](#-key-features) • [Demo](#-live-demo) • [Getting Started](#-getting-started) • [Tech Stack](#%EF%B8%8F-tech-stack) • [Contributing](#-contributing) • [License](#-license)
+  [Features](#-key-features) • [Getting Started](#-getting-started) • [Tech Stack](#%EF%B8%8F-tech-stack) • [Contributing](#-contributing) • [License](#-license)
 </div>
 
 ---
@@ -63,14 +63,14 @@ Experience ZenPulse in action: [ZenPulse Demo](https://your-demo-link-here.com)
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/zenpulse.git
-   cd zenpulse
+   git clone https://github.com/zafar-TechWizard/ZenPulse.git
+   cd ZenPulse
    ```
 
-2. **Set up virtual environment**
+2. **Set up API configuration**
+   *Create an `api.py`*
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+   api_key = "your_groq_api_key_here"
    ```
 
 3. **Install dependencies**
@@ -78,26 +78,15 @@ Experience ZenPulse in action: [ZenPulse Demo](https://your-demo-link-here.com)
    pip install -r requirements.txt
    ```
 
-4. **Set up environment variables**
-   Create a `.env` file in the root directory:
-   ```
-   GROQ_API_KEY=your_api_key_here
-   SECRET_KEY=your_secret_key_here
-   ```
-
-5. **Initialize the database**
-   ```bash
-   flask db init
-   flask db migrate
-   flask db upgrade
-   ```
-
-6. **Run the application**
+4. **Run the application**
    ```bash
    flask run
    ```
 
-7. Open your browser and navigate to `http://localhost:5000`
+5. Open your browser and navigate to 
+    ``` 
+    http://localhost:5000
+    ```
 
 ## 🛠️ Tech Stack
 
@@ -139,25 +128,39 @@ Experience ZenPulse in action: [ZenPulse Demo](https://your-demo-link-here.com)
 ## 📁 Project Structure
 
 ```
-zenpulse/
+ZenPulse/
 │
-├── MAIN_APP/
-│   ├── static/
-│   │   ├── css/
-│   │   ├── js/
-│   │   └── images/
-│   │
-│   ├── templates/
-│   │   ├── index.html
-│   │   ├── dashboard.html
-│   │   ├── chat.html
-│   │   └── ...
-│   │
-│   ├── app.py
-│   └── model.py
+├── static/
+│   ├── css/
+│   │   ├── dashboard.css
+│   │   ├── gratitude.css
+│   │   ├── music.css
+│   │   ├── pet.css
+│   │   └── style.css
+│   ├── js/
+│   │   ├── chat.js
+│   │   ├── dashboard.js
+│   │   ├── main.js
+│   │   ├── music.js
+│   │   └── pet.js
+│   └── images/
 │
-├── venv/
-├── .gitignore
+├── templates/
+│   ├── chat.html
+│   ├── dashboard.html
+│   ├── edit_gratitude.html
+│   ├── games.html
+│   ├── gratitude.html
+│   ├── index.html
+│   ├── login.html
+│   ├── music.html
+│   ├── pet.html
+│   ├── reset_password.html
+│   └── signup.html
+│
+├── api.py
+├── app.py
+├── model.py
 ├── requirements.txt
 └── README.md
 ```
@@ -174,7 +177,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 - [Flask](https://flask.palletsprojects.com/) and its extensions
 - [GROQ API](https://groq.com/) for powering our AI responses
-- All the open-source libraries used in this project
 
 ---
 
@@ -182,8 +184,8 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
   <strong>Remember, your mental health matters. ZenPulse is here to support you every step of the way.</strong>
   <br><br>
   <a href="https://your-website.com">Website</a>
-  •
+  <strong>•</strong>
   <a href="https://twitter.com/your-twitter">Twitter</a>
-  •
+  <strong>•</strong>
   <a href="https://www.linkedin.com/company/your-linkedin">LinkedIn</a>
 </div>
